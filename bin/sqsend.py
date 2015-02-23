@@ -7,21 +7,6 @@ from splunk.clilib import cli_common as cli
 from splunklib.searchcommands import \
     dispatch, StreamingCommand, Configuration, Option, validators
 
-# Loading eggs into python execution path
-if platform == 'darwin':
-    platform = 'macosx'
-running_dir = os.path.dirname(os.path.realpath(__file__))
-egg_dir = os.path.join(running_dir, 'eggs')
-for filename in os.listdir(egg_dir):
-    file_segments = filename.split('-')
-    if filename.endswith('.egg'):
-        filename = os.path.join(egg_dir, filename)
-        if len(file_segments) <= 3:
-            sys.path.append(filename)
-        else:
-            if platform in filename:
-                sys.path.append(filename)
-
 import boto.sqs
 from boto.sqs.message import Message
 
@@ -138,6 +123,22 @@ class SqSendCommand(StreamingCommand):
         doc='''**Syntax:** **Description=***<string>*
          **Description:** A JSON string that represents a configuration item ''',
         require=True)
+
+    group = Option(
+        doc='''**Syntax:** **Description=***<string>*
+         **Description:** A JSON string that represents a configuration item ''',
+        require=True)
+
+    env = Option(
+        doc='''**Syntax:** **Description=***<string>*
+         **Description:** A JSON string that represents a configuration item ''',
+        require=True)
+
+    feature = Option(
+        doc='''**Syntax:** **Description=***<string>*
+         **Description:** A JSON string that represents a configuration item ''',
+        require=True)
+
 
 
     def stream(self, records):
