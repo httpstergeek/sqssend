@@ -4,7 +4,6 @@
 # This is an sqsend.conf in $SPLUNK_HOME/etc/sqsend/default.  To set custom configurations,
 # place an sqsend.conf $SPLUNK_HOME/etc/sqsend/local.
 
-l.
 
 #*******
 # GENERAL SETTINGS:
