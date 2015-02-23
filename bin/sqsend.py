@@ -139,12 +139,17 @@ class SqSendCommand(StreamingCommand):
          **Description:** A JSON string that represents a configuration item ''',
         require=True)
 
+    instance = Option(
+        doc='''**Syntax:** **instance=***<string>*
+        **Description:** stanza defined in sqsend.conf. defaults to sqsend ''',
+        require=True)
 
 
     def stream(self, records):
         self.logger.debug('SqSendCommand: %s' % self)
         try:
-            conf = getStanza('sqsend', 'sqsend')
+            instance = self.instance if self.instance else 'sqsend'
+            conf = getStanza('sqsend', instance)
             aws_region = conf['aws_region']
             aws_access_key_id = conf['AKEY']
             aws_secret_access_key = conf['ASECRET']
@@ -166,7 +171,7 @@ class SqSendCommand(StreamingCommand):
 
             # loading fields into dict
             timeOfEvent = datetime.datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
-            message = {}
+            message = dict()
             message['source'] = source
             message['u_source_url'] = self.url if not self.url in record else record[self.url]
             message['node'] = self.node if not self.node in record else record[self.node]
@@ -177,8 +182,12 @@ class SqSendCommand(StreamingCommand):
             message['description'] = self.desc if not self.desc in record else record[self.desc]
             message['additional_info'] = self.addinfo if not self.addinfo in record else record[self.addinfo]
             message['ci_identifier'] = self.cid if not self.cid in record else record[self.cid]
+            message['group'] = self.group if not self.group in record else record[self.group]
+            message['env'] = self.env if not self.env in record else record[self.env]
+            message['feature'] = self.feature if not self.feature in record else record[self.feature]
             message['timeOfEvent'] = timeOfEvent
 
+            # filtering key values where value is None
             message = {k: v for k, v in message.items() if v}
 
             # using json to convert dict to json and scrub non ASCII characters
@@ -187,25 +196,22 @@ class SqSendCommand(StreamingCommand):
                                   sort_keys=True,
                                   ensure_ascii=True)
             notsent = True
-            attempts = 0
-            # attempting to send message
-            while notsent:
-                attempts += 1
-                if attempts > 3:
-                    break
-                if (message['alert'] == "1"):
-                    try:
-                        sqs.submit_event(jmessage)
-                        notsent = False
-                        record['status'] = 'sent'
-                    except Exception as e:
-                        record['status'] = 'notsent'
-                        record['error_message'] = e
-                    record = dict(record.items() + message.items())
-                else:
+            if (message['alert'] == "1"):
+                try:
+                    sqs.submit_event(jmessage)
+                    notsent = False
+                    record['status'] = 'sent'
+                except Exception as e:
                     record['status'] = 'notsent'
-                    record = dict(record.items() + message.items())
-                    break
+                    record['error_message'] = e
+                    yield record
+                    exit()
+                record = dict(record.items() + message.items())
+            else:
+                record['status'] = 'notsent'
+                record = dict(record.items() + message.items())
+                yield record
+                break
             yield record
             exit()
 
