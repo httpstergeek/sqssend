@@ -13,6 +13,7 @@ from boto.sqs.message import Message
 # http://wiki.servicenow.com/index.php?title=Integrating_External_Events_with_Event_Management Using_the_Python_Script
 # 1 = Critical, 2 = Major, 3 = Minor, 4 = Warning, or 0 = Clear.
 
+
 def getStanza(conf, stanza):
     """
     :param conf: splunk conf file
@@ -34,16 +35,6 @@ def getStanza(conf, stanza):
     return apikeyconf[stanza]
 
 
-def validateSeverity(severity):
-    try:
-        severity = int(severity)
-        if not (severity >= 1 or severity <= 5):
-            self.logger.debug('SqSendCommand: %s, %s' % 'sev is less than 1 or greater than 5', self)
-            exit(1)
-    except Exception as e:
-        self.logger.debug('SqSendCommand: %s, %s' % e, self)
-
-
 class SQSClient(object):
     """
     A simple client that can submit events to SQS
@@ -55,7 +46,6 @@ class SQSClient(object):
                                                aws_secret_access_key=aws_secret_access_key)
 
         self.q = self.conn.create_queue(sqsqueue)
-
 
     def submit_event(self, data):
         m = Message()
