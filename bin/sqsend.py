@@ -88,7 +88,8 @@ class SqSendCommand(StreamingCommand):
 
     addinfo = Option(
         doc='''**Syntax:** **Description=***<string>*
-         **Description:** Additional information for the event. This information can be used for third-party integration or other post-alert processing. ''')
+         **Description:** Additional information for the event. This information can be used for third-party integration
+         or other post-alert processing. ''')
 
     cid = Option(
         doc='''**Syntax:** **Description=***<string>*
