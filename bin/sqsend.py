@@ -9,11 +9,9 @@ from splunklib.searchcommands import \
 import boto.sqs
 from boto.sqs.message import Message
 
-
 # servicenow severity
 # http://wiki.servicenow.com/index.php?title=Integrating_External_Events_with_Event_Management Using_the_Python_Script
 # 1 = Critical, 2 = Major, 3 = Minor, 4 = Warning, or 0 = Clear.
-
 
 def getStanza(conf, stanza):
     """
