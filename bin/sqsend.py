@@ -143,7 +143,6 @@ class SqSendCommand(StreamingCommand):
         **Description:** stanza defined in sqsend.conf. defaults to sqsend ''',
         require=True)
 
-
     def stream(self, records):
         self.logger.debug('SqSendCommand: %s' % self)
         try:
@@ -194,11 +193,9 @@ class SqSendCommand(StreamingCommand):
                                   indent=4,
                                   sort_keys=True,
                                   ensure_ascii=True)
-            notsent = True
-            if (message['alert'] == "1"):
+            if message['alert'] == "1":
                 try:
                     sqs.submit_event(jmessage)
-                    notsent = False
                     record['status'] = 'sent'
                 except Exception as e:
                     record['status'] = 'notsent'
