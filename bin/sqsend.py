@@ -2,7 +2,6 @@ import json
 import sys
 import os
 import datetime
-from platform import system
 from splunk.clilib import cli_common as cli
 from splunklib.searchcommands import \
     dispatch, StreamingCommand, Configuration, Option, validators
