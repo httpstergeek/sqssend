@@ -44,16 +44,15 @@ Installation instructions
 
 2) create $SPLUNK_HOME/etc/apps/sqsend/local/sqsend.conf.
 
-3) configure [sqsend] stanza with url to graphite instance. Note: if proxy look at README for proxy config.
+3) configure [sqsend] stanza with url to sqs queue info.
 
 Example Command
 ---------
-
+```
 ...| sqsend type="Storage"  res="Disk E:" sev="1" desc="Disk is almost full" node​=host
     OR
 ...| sqsend type="Storage"  res="Disk E:" sev="1" desc="Disk is almost full" node​=host instance=stage
-    OR
-
+```
 Recommendations
 ---------
 
